@@ -1,0 +1,12 @@
+streamlit
+pydantic
+langchain-core
+langchain-ollama
+langchain-chroma
+langchain-community
+chromadb
+sentence-transformers
+faster-whisper
+audio-recorder-streamlit
+torch
+transformers
