@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Psychiatrist - Dr. Aiden</title>
+  <title>SEREN AI - Mental Healthcare Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes fadeIn {
@@ -25,6 +25,39 @@
       100% {
         transform: scale(1.5);
         opacity: 0;
+      }
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        text-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
+                     0 0 40px rgba(59, 130, 246, 0.3),
+                     0 0 60px rgba(59, 130, 246, 0.2);
+      }
+      50% {
+        text-shadow: 0 0 30px rgba(59, 130, 246, 0.8),
+                     0 0 60px rgba(59, 130, 246, 0.5),
+                     0 0 90px rgba(59, 130, 246, 0.3);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-20px);
       }
     }
 
@@ -88,59 +121,279 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #64748b;
     }
+
+    /* Loading Screen Styles */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+
+    #loadingScreen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .logo-text {
+      font-size: 5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glow 2s ease-in-out infinite;
+      letter-spacing: 0.1em;
+    }
+
+    .tagline {
+      color: #94a3b8;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: slideUp 1s ease-out 0.3s both;
+    }
+
+    .brain-icon {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 2rem;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+    }
+
+    .loading-dots {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .loading-dots span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #3b82f6;
+      animation: loading-bounce 1.4s infinite ease-in-out both;
+    }
+
+    .loading-dots span:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .loading-dots span:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    @keyframes loading-bounce {
+      0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .start-button {
+      margin-top: 3rem;
+      padding: 1rem 3rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      animation: slideUp 1s ease-out 0.6s both;
+    }
+
+    .start-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+    }
+
+    .start-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Chat input styles */
+    .chat-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.5);
+      padding: 0.75rem;
+      border-radius: 24px;
+      border: 1px solid rgba(71, 85, 105, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem;
+    }
+
+    .chat-input::placeholder {
+      color: #64748b;
+    }
+
+    .send-btn {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700/50 sticky top-0 z-10">
-    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-          </svg>
-        </div>
-        <div>
-          <h1 class="text-xl font-bold text-white">Dr. Aiden</h1>
-          <p class="text-xs text-slate-400">AI Psychiatrist</p>
-        </div>
-      </div>
-      <button 
-        id="resetBtn" 
-        class="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-white rounded-lg transition-all duration-200 flex items-center gap-2 text-sm font-medium border border-slate-600"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-        </svg>
-        New Session
-      </button>
+  <!-- Loading Screen -->
+  <div id="loadingScreen">
+    <svg class="brain-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path stroke="url(#gradient)" stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
+    
+    <h1 class="logo-text">SEREN AI</h1>
+    <p class="tagline">Mental Healthcare Assistant</p>
+    
+    <div class="loading-dots" id="loadingDots">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
-  </header>
-
-  <!-- Chat Container -->
-  <div class="flex-1 overflow-hidden flex flex-col max-w-5xl w-full mx-auto">
-    <div id="chatWrapper" class="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar">
-      <div id="chat" class="flex flex-col gap-4 max-w-4xl mx-auto"></div>
-    </div>
+    
+    <button class="start-button" id="startButton" disabled>
+      Initializing...
+    </button>
   </div>
 
-  <!-- Controls -->
-  <div class="bg-slate-800/30 backdrop-blur-sm border-t border-slate-700/50">
-    <div class="max-w-5xl mx-auto px-4 py-6">
-      <div class="flex items-center justify-center gap-6">
+  <!-- Main App (Hidden Initially) -->
+  <div id="mainApp" style="display: none;" class="flex flex-col h-screen">
+    <!-- Header -->
+    <header class="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700/50 z-10">
+      <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-white">SEREN AI</h1>
+            <p class="text-xs text-slate-400">Dr. Aiden - AI Psychiatrist</p>
+          </div>
+        </div>
         <button 
-          id="micBtn" 
-          class="relative w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/50 transition-all duration-200 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+          id="resetBtn" 
+          class="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-white rounded-lg transition-all duration-200 flex items-center gap-2 text-sm font-medium border border-slate-600"
         >
-          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
           </svg>
+          New Session
         </button>
       </div>
-      
-      <div class="text-center mt-4">
-        <p id="status" class="text-sm text-slate-400 font-medium"></p>
+    </header>
+
+    <!-- Chat Container -->
+    <div class="flex-1 overflow-hidden flex flex-col max-w-5xl w-full mx-auto">
+      <div id="chatWrapper" class="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar">
+        <div id="chat" class="flex flex-col gap-4 max-w-4xl mx-auto pb-4"></div>
+      </div>
+    </div>
+
+    <!-- Fixed Bottom Controls -->
+    <div class="bg-slate-800/50 backdrop-blur-sm border-t border-slate-700/50 sticky bottom-0">
+      <div class="max-w-5xl mx-auto px-4 py-4">
+        <!-- Input Mode Toggle -->
+        <div class="flex justify-center gap-2 mb-3">
+          <button 
+            id="voiceModeBtn" 
+            class="px-4 py-1.5 bg-blue-600 text-white rounded-full text-xs font-medium transition-all"
+          >
+            🎙️ Voice
+          </button>
+          <button 
+            id="textModeBtn" 
+            class="px-4 py-1.5 bg-slate-700/50 text-slate-400 rounded-full text-xs font-medium transition-all"
+          >
+            💬 Text
+          </button>
+        </div>
+
+        <!-- Voice Input (Default) -->
+        <div id="voiceInput" class="flex flex-col items-center gap-3">
+          <button 
+            id="micBtn" 
+            class="relative w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/50 transition-all duration-200 flex items-center justify-center group"
+          >
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+            </svg>
+          </button>
+          <p id="status" class="text-sm text-slate-400 font-medium">Tap the microphone to speak</p>
+        </div>
+
+        <!-- Text Input (Hidden Initially) -->
+        <div id="textInput" style="display: none;">
+          <div class="chat-input-container max-w-3xl mx-auto">
+            <input 
+              type="text" 
+              id="chatInput" 
+              class="chat-input" 
+              placeholder="Type your message here..."
+              autocomplete="off"
+            />
+            <button id="sendBtn" class="send-btn">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -149,23 +402,37 @@
 
 let sessionId = null;
 let isListening = false;
+let isVoiceMode = true;
 
 const chat = document.getElementById("chat");
 const chatWrapper = document.getElementById("chatWrapper");
 const micBtn = document.getElementById("micBtn");
 const resetBtn = document.getElementById("resetBtn");
 const statusText = document.getElementById("status");
+const loadingScreen = document.getElementById("loadingScreen");
+const mainApp = document.getElementById("mainApp");
+const startButton = document.getElementById("startButton");
+
+// Mode toggle elements
+const voiceModeBtn = document.getElementById("voiceModeBtn");
+const textModeBtn = document.getElementById("textModeBtn");
+const voiceInput = document.getElementById("voiceInput");
+const textInput = document.getElementById("textInput");
+const chatInput = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (!SpeechRecognition) {
-  alert("Speech Recognition not supported in this browser. Please use Chrome or Edge.");
+  console.warn("Speech Recognition not supported in this browser.");
 }
 
-const recognition = new SpeechRecognition();
-recognition.continuous = true;
-recognition.interimResults = true;
-recognition.lang = "en-US";
+const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+if (recognition) {
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = "en-US";
+}
 
 let currentTranscript = "";
 let typingNode = null;
@@ -228,6 +495,7 @@ function clearChat() {
 }
 
 function speak(text) {
+  if (!isVoiceMode) return; // Only speak in voice mode
   const msg = new SpeechSynthesisUtterance(text);
   msg.rate = 0.9;
   msg.pitch = 1.0;
@@ -235,26 +503,108 @@ function speak(text) {
   speechSynthesis.speak(msg);
 }
 
-async function startSession() {
-  statusText.textContent = "Initializing session...";
-  
+async function initializeSession() {
   try {
     const response = await fetch("/start", { method: "POST" });
     const data = await response.json();
     sessionId = data.session_id;
 
-    addMessage(data.assistant_message, "assistant");
-    speak(data.assistant_message);
-
-    statusText.textContent = "Tap the microphone to speak";
+    // Hide loading dots
+    document.getElementById("loadingDots").style.display = "none";
+    
+    // Enable start button
+    startButton.disabled = false;
+    startButton.textContent = "Start Session";
+    
+    // Store initial message
+    window.initialMessage = data.assistant_message;
   } catch (error) {
-    console.error("Error starting session:", error);
-    statusText.textContent = "Error starting session";
+    console.error("Error initializing session:", error);
+    
+    // Hide loading dots even on error
+    document.getElementById("loadingDots").style.display = "none";
+    
+    startButton.disabled = false;
+    startButton.textContent = "Error - Retry";
+  }
+}
+startButton.onclick = () => {
+  // Hide loading screen
+  loadingScreen.classList.add("hidden");
+  setTimeout(() => {
+    loadingScreen.style.display = "none";
+    mainApp.style.display = "flex";
+    
+    // Show and speak initial message
+    if (window.initialMessage) {
+      addMessage(window.initialMessage, "assistant");
+      speak(window.initialMessage);
+    }
+  }, 500);
+};
+
+// Initialize on page load
+window.onload = initializeSession;
+
+// Mode toggle
+voiceModeBtn.onclick = () => {
+  isVoiceMode = true;
+  voiceModeBtn.classList.remove("bg-slate-700/50", "text-slate-400");
+  voiceModeBtn.classList.add("bg-blue-600", "text-white");
+  textModeBtn.classList.remove("bg-blue-600", "text-white");
+  textModeBtn.classList.add("bg-slate-700/50", "text-slate-400");
+  voiceInput.style.display = "flex";
+  textInput.style.display = "none";
+};
+
+textModeBtn.onclick = () => {
+  isVoiceMode = false;
+  textModeBtn.classList.remove("bg-slate-700/50", "text-slate-400");
+  textModeBtn.classList.add("bg-blue-600", "text-white");
+  voiceModeBtn.classList.remove("bg-blue-600", "text-white");
+  voiceModeBtn.classList.add("bg-slate-700/50", "text-slate-400");
+  voiceInput.style.display = "none";
+  textInput.style.display = "block";
+  chatInput.focus();
+};
+
+// Text input handlers
+async function sendTextMessage() {
+  const message = chatInput.value.trim();
+  if (!message) return;
+
+  chatInput.value = "";
+  addMessage(message, "user");
+  addTyping();
+
+  try {
+    const response = await fetch("/chat_text", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: message,
+        session_id: sessionId
+      })
+    });
+
+    const data = await response.json();
+    removeTyping();
+    addMessage(data.assistant_message, "assistant");
+  } catch (err) {
+    removeTyping();
+    addMessage("I apologize, but I'm having trouble connecting right now. Please try again.", "assistant");
+    console.error("Error:", err);
   }
 }
 
-window.onload = startSession;
+sendBtn.onclick = sendTextMessage;
+chatInput.onkeypress = (e) => {
+  if (e.key === 'Enter') {
+    sendTextMessage();
+  }
+};
 
+// Reset button
 resetBtn.onclick = async () => {
   clearChat();
   statusText.textContent = "Starting new session...";
@@ -279,93 +629,96 @@ resetBtn.onclick = async () => {
   }
 };
 
-micBtn.onclick = () => {
-  if (!isListening) {
-    userStopped = false;
-    try {
-      recognition.start();
-    } catch (e) {
-      console.warn("Recognition already started");
-    }
-    isListening = true;
-    micBtn.classList.add("recording-pulse", "!from-red-500", "!to-red-600", "!shadow-red-500/50");
-    statusText.textContent = "Listening... (tap again to stop)";
-  } else {
-    userStopped = true;
-    recognition.stop();
-  }
-};
-
-recognition.onresult = (event) => {
-  let interim = "";
-  for (let i = event.resultIndex; i < event.results.length; ++i) {
-    interim += event.results[i][0].transcript;
-  }
-  currentTranscript = interim;
-};
-
-recognition.onend = async () => {
-  if (!userStopped) {
-    try {
-      recognition.start();
+// Voice input handlers (only if supported)
+if (recognition) {
+  micBtn.onclick = () => {
+    if (!isListening) {
+      userStopped = false;
+      try {
+        recognition.start();
+      } catch (e) {
+        console.warn("Recognition already started");
+      }
       isListening = true;
+      micBtn.classList.add("recording-pulse", "!from-red-500", "!to-red-600", "!shadow-red-500/50");
       statusText.textContent = "Listening... (tap again to stop)";
-      return;
-    } catch (e) {
-      console.warn("Speech recognition restart failed:", e);
+    } else {
+      userStopped = true;
+      recognition.stop();
     }
-  }
+  };
 
-  isListening = false;
-  userStopped = false;
-  micBtn.classList.remove("recording-pulse", "!from-red-500", "!to-red-600", "!shadow-red-500/50");
+  recognition.onresult = (event) => {
+    let interim = "";
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      interim += event.results[i][0].transcript;
+    }
+    currentTranscript = interim;
+  };
 
-  if (!currentTranscript || currentTranscript.trim() === "") {
-    statusText.textContent = "Tap the microphone to speak";
-    return;
-  }
+  recognition.onend = async () => {
+    if (!userStopped) {
+      try {
+        recognition.start();
+        isListening = true;
+        statusText.textContent = "Listening... (tap again to stop)";
+        return;
+      } catch (e) {
+        console.warn("Speech recognition restart failed:", e);
+      }
+    }
 
-  addMessage(currentTranscript.trim(), "user");
-  statusText.textContent = "Dr. Aiden is thinking...";
-  addTyping();
+    isListening = false;
+    userStopped = false;
+    micBtn.classList.remove("recording-pulse", "!from-red-500", "!to-red-600", "!shadow-red-500/50");
 
-  try {
-    const response = await fetch("/chat_text", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: currentTranscript.trim(),
-        session_id: sessionId
-      })
-    });
+    if (!currentTranscript || currentTranscript.trim() === "") {
+      statusText.textContent = "Tap the microphone to speak";
+      return;
+    }
 
-    const data = await response.json();
+    addMessage(currentTranscript.trim(), "user");
+    statusText.textContent = "Dr. Aiden is thinking...";
+    addTyping();
 
-    removeTyping();
-    addMessage(data.assistant_message, "assistant");
-    speak(data.assistant_message);
-    statusText.textContent = "Tap the microphone to speak";
-  } catch (err) {
-    removeTyping();
-    addMessage("I apologize, but I'm having trouble connecting right now. Please try again.", "assistant");
-    statusText.textContent = "Connection error - tap to retry";
-    console.error("Error:", err);
-  }
+    try {
+      const response = await fetch("/chat_text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: currentTranscript.trim(),
+          session_id: sessionId
+        })
+      });
 
-  currentTranscript = "";
-};
+      const data = await response.json();
 
-recognition.onerror = (event) => {
-  console.error("Recognition error:", event.error);
-  isListening = false;
-  micBtn.classList.remove("recording-pulse", "!from-red-500", "!to-red-600", "!shadow-red-500/50");
-  
-  if (event.error === 'not-allowed') {
-    statusText.textContent = "Microphone access denied";
-  } else {
-    statusText.textContent = "Tap the microphone to speak";
-  }
-};
+      removeTyping();
+      addMessage(data.assistant_message, "assistant");
+      speak(data.assistant_message);
+      statusText.textContent = "Tap the microphone to speak";
+    } catch (err) {
+      removeTyping();
+      addMessage("I apologize, but I'm having trouble connecting right now. Please try again.", "assistant");
+      statusText.textContent = "Connection error - tap to retry";
+      console.error("Error:", err);
+    }
+
+    currentTranscript = "";
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Recognition error:", event.error);
+    isListening = false;
+    micBtn.classList.remove("recording-pulse", "!from-red-500", "!to-red-600", "!shadow-red-500/50");
+    
+    if (event.error === 'not-allowed') {
+      statusText.textContent = "Microphone access denied";
+    } else {
+      statusText.textContent = "Tap the microphone to speak";
+    }
+  };
+}
 
 </script>
 
