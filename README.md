@@ -443,16 +443,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-##  Crisis Resources
+## Crisis Resources
 
 If you or someone you know is in crisis:
 
-**United States**:
-- National Suicide Prevention Lifeline: 988
-- Crisis Text Line: Text HOME to 741741
+**India**  
+- KIRAN Mental Health Helpline: 1800-599-0019 (24/7)
 
-**International**:
-- Find resources at: [findahelpline.com](https://findahelpline.com)
+**Global**  
+- Find local crisis helplines at: https://findahelpline.com
 
 ---
 
