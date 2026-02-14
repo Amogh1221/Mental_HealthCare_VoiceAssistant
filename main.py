@@ -1,14 +1,16 @@
-from fastapi import FastAPI, Request, Body
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 import uuid
 from typing import Dict, List
+from pydantic import BaseModel
 
 from rag_engine import rag_engine
 from llm_engine import llm_engine
 
 app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,6 +23,17 @@ templates = Jinja2Templates(directory="templates")
 
 sessions: Dict[str, List[Dict]] = {}
 MAX_HISTORY = 100
+
+
+# Pydantic models for request validation
+class ResetRequest(BaseModel):
+    session_id: str
+
+
+class ChatRequest(BaseModel):
+    message: str
+    session_id: str
+
 
 def trim_history(history):
     if len(history) > MAX_HISTORY:
@@ -60,6 +73,7 @@ def create_new_session():
 def home(request: Request):
     return templates.TemplateResponse("main.html", {"request": request})
 
+
 @app.post("/start")
 def start_session():
     session_id, opening_message = create_new_session()
@@ -69,12 +83,14 @@ def start_session():
         "session_id": session_id
     }
 
+
 @app.post("/reset")
-def reset_session(session_id: str = Body(...)):
+def reset_session(request: ResetRequest):
+    # Delete old session if it exists
+    if request.session_id in sessions:
+        del sessions[request.session_id]
 
-    if session_id in sessions:
-        del sessions[session_id]
-
+    # Create new session
     session_id, opening_message = create_new_session()
 
     return {
@@ -84,24 +100,22 @@ def reset_session(session_id: str = Body(...)):
 
 
 @app.post("/chat_text")
-def chat_text(
-    message: str = Body(...),
-    session_id: str = Body(...)
-):
-
-    history = sessions.get(session_id)
+def chat_text(request: ChatRequest):
+    
+    history = sessions.get(request.session_id)
 
     if history is None:
         session_id, opening_message = create_new_session()
         history = sessions[session_id]
+        request.session_id = session_id
 
     history.append({
         "role": "user",
-        "content": message
+        "content": request.message
     })
 
     history = trim_history(history)
-    sessions[session_id] = history
+    sessions[request.session_id] = history
 
     llm1_response = llm_engine.psychiatrist_response(history)
 
@@ -111,19 +125,22 @@ def chat_text(
             "content": llm1_response.assistant_message
         })
         history = trim_history(history)
-        sessions[session_id] = history
+        sessions[request.session_id] = history
 
         return {
             "assistant_message": llm1_response.assistant_message,
             "intent": llm1_response.intent
         }
 
+    # ANALYZE path
     if llm1_response.intent == "ANALYZE":
+        # Get recent conversation for retrieval
         recent_text = "\n".join(
             [msg["content"] for msg in history[-10:]]
         )
         retrieved_context = rag_engine.retrieve(recent_text)
 
+        # Prepare context for LLM2
         llm2_context = f"""Analyze the following conversation and provide pattern analysis.
 
 [Recent Conversation History]
@@ -134,9 +151,11 @@ def chat_text(
 
 Based on the conversation and clinical context above, identify patterns across all six domains."""
 
+        # Get LLM2 analysis
         llm2_input = [{"role": "user", "content": llm2_context}]
         llm2_response = llm_engine.internal_reasoning(llm2_input)
 
+        # Format analysis for LLM1
         analysis_content = f"""[Internal Clinical Analysis - For Treatment Planning]
 
 Emotional Themes:
@@ -159,6 +178,7 @@ Areas Requiring Further Exploration:
 
 Based on this analysis, provide your next therapeutic response to the patient."""
 
+        # Get final LLM1 response with analysis
         enriched_history = history + [
             {
                 "role": "user",
@@ -168,15 +188,16 @@ Based on this analysis, provide your next therapeutic response to the patient.""
 
         llm1_final_response = llm_engine.psychiatrist_response(enriched_history)
 
+        # Append final response to history
         history.append({
             "role": "assistant",
             "content": llm1_final_response.assistant_message
         })
 
         history = trim_history(history)
-        sessions[session_id] = history
+        sessions[request.session_id] = history
 
         return {
             "assistant_message": llm1_final_response.assistant_message,
-            "intent": "CONTINUE"
+            "intent": "CONTINUE"  # Always continue after analysis
         }
