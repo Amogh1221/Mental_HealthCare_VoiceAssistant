@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-multipart
+jinja2
+datasets
+langchain
+langchain-community
+langchain-chroma
+langchain-ollama
+chromadb
+sentence-transformers
+pydantic
+tqdm
+huggingface-hub
