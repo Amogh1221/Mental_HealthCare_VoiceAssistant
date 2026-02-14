@@ -437,9 +437,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ##  Support & Contact
 
-- **Issues**: [GitHub Issues](https://github.com/Amogh1221/Mental_HealthCare_VoiceAssistan/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Amogh1221/Mental_HealthCare_VoiceAssistan/discussions)
-- **Email**: your.email@example.com
+- **Email**: ag14gupta@gmail.com
 
 ---
 
