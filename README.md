@@ -1,4 +1,4 @@
-# 🧠 AI Psychiatrist - Dr. Aiden
+#  AI Psychiatrist - Dr. Aiden
 
 An intelligent psychiatric assessment system powered by Large Language Models (LLMs) and Retrieval-Augmented Generation (RAG). Dr. Aiden conducts empathetic clinical interviews, analyzes conversation patterns, and provides evidence-based psychological insights grounded in clinical psychopathology literature.
 
