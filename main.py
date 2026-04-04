@@ -74,7 +74,7 @@ def create_new_session():
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    return templates.TemplateResponse("main.html", {"request": request})
+    return templates.TemplateResponse(request, "main.html")
 
 
 @app.post("/start")
