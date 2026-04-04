@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEREN AI - Mental Healthcare Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeIn {
+      from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        text-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
+                     0 0 40px rgba(59, 130, 246, 0.3),
+                     0 0 60px rgba(59, 130, 246, 0.2);
+      }
+      50% {
+        text-shadow: 0 0 30px rgba(59, 130, 246, 0.8),
+                     0 0 60px rgba(59, 130, 246, 0.5),
+                     0 0 90px rgba(59, 130, 246, 0.3);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .recording-pulse::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.5);
+      animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .typing-indicator span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9ca3af;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.7;
+      }
+      30% {
+        transform: translateY(-10px);
+        opacity: 1;
+      }
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 3px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* Loading Screen Styles */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+
+    #loadingScreen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .logo-text {
+      font-size: 5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glow 2s ease-in-out infinite;
+      letter-spacing: 0.1em;
+    }
+
+    .tagline {
+      color: #94a3b8;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: slideUp 1s ease-out 0.3s both;
+    }
+
+    .brain-icon {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 2rem;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+    }
+
+    .loading-dots {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .loading-dots span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #3b82f6;
+      animation: loading-bounce 1.4s infinite ease-in-out both;
+    }
+
+    .loading-dots span:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .loading-dots span:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    @keyframes loading-bounce {
+      0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .start-button {
+      margin-top: 3rem;
+      padding: 1rem 3rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      animation: slideUp 1s ease-out 0.6s both;
+    }
+
+    .start-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+    }
+
+    .start-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Chat input styles */
+    .chat-input-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.5);
+      padding: 0.75rem;
+      border-radius: 24px;
+      border: 1px solid rgba(71, 85, 105, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem;
+    }
+
+    .chat-input::placeholder {
+      color: #64748b;
+    }
+
+    .send-btn {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex flex-col">
+
+  <!-- Loading Screen -->
+  <div id="loadingScreen">
+    <svg class="brain-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path stroke="url(#gradient)" stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
+    
+    <h1 class="logo-text">SEREN AI</h1>
+    <p class="tagline">Mental Healthcare Assistant</p>
+    
+    <div class="loading-dots" id="loadingDots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <button class="start-button" id="startButton" disabled>
+      Initializing...
+    </button>
+  </div>
+
+  <!-- Main App (Hidden Initially) -->
+  <div id="mainApp" style="display: none;" class="flex flex-col h-screen">
+    <!-- Header -->
+    <header class="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700/50 z-10">
+      <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-white">SEREN AI</h1>
+            <p class="text-xs text-slate-400">Dr. Aiden - AI Psychiatrist</p>
+          </div>
+        </div>
+        <button 
+          id="resetBtn" 
+          class="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-white rounded-lg transition-all duration-200 flex items-center gap-2 text-sm font-medium border border-slate-600"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          New Session
+        </button>
+      </div>
+    </header>
+
+    <!-- Chat Container -->
+    <div class="flex-1 overflow-hidden flex flex-col max-w-5xl w-full mx-auto">
+      <div id="chatWrapper" class="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar">
+        <div id="chat" class="flex flex-col gap-4 max-w-4xl mx-auto pb-4"></div>
+      </div>
+    </div>
+
+    <!-- Fixed Bottom Controls -->
+    <div class="bg-slate-800/50 backdrop-blur-sm border-t border-slate-700/50 sticky bottom-0">
+      <div class="max-w-5xl mx-auto px-4 py-4">
+        <!-- Input Mode Toggle -->
+        <div class="flex justify-center gap-2 mb-3">
+          <button 
+            id="voiceModeBtn" 
+            class="px-4 py-1.5 bg-blue-600 text-white rounded-full text-xs font-medium transition-all"
+          >
+            🎙️ Voice
+          </button>
+          <button 
+            id="textModeBtn" 
+            class="px-4 py-1.5 bg-slate-700/50 text-slate-400 rounded-full text-xs font-medium transition-all"
+          >
+            💬 Text
+          </button>
+        </div>
+
+        <!-- Voice Input (Default) -->
+        <div id="voiceInput" class="flex flex-col items-center gap-3">
+          <button 
+            id="micBtn" 
+            class="relative w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/50 transition-all duration-200 flex items-center justify-center group"
+          >
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+            </svg>
+          </button>
+          <p id="status" class="text-sm text-slate-400 font-medium">Tap the microphone to speak</p>
+        </div>
+
+        <!-- Text Input (Hidden Initially) -->
+        <div id="textInput" style="display: none;">
+          <div class="chat-input-container max-w-3xl mx-auto">
+            <input 
+              type="text" 
+              id="chatInput" 
+              class="chat-input" 
+              placeholder="Type your message here..."
+              autocomplete="off"
+            />
+            <button id="sendBtn" class="send-btn">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+let sessionId = null;
+let isListening = false;
+let isVoiceMode = true;
+let mediaRecorder;
+let audioChunks = [];
+
+const chat = document.getElementById("chat");
+const chatWrapper = document.getElementById("chatWrapper");
+const micBtn = document.getElementById("micBtn");
+const resetBtn = document.getElementById("resetBtn");
+const statusText = document.getElementById("status");
+const loadingScreen = document.getElementById("loadingScreen");
+const mainApp = document.getElementById("mainApp");
+const startButton = document.getElementById("startButton");
+
+// Mode toggle elements
+const voiceModeBtn = document.getElementById("voiceModeBtn");
+const textModeBtn = document.getElementById("textModeBtn");
+const voiceInput = document.getElementById("voiceInput");
+const textInput = document.getElementById("textInput");
+const chatInput = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
+
+let typingNode = null;
+
+function scrollToBottom() {
+  setTimeout(() => {
+    chatWrapper.scrollTop = chatWrapper.scrollHeight;
+  }, 100);
+}
+
+function addMessage(text, role) {
+  const messageDiv = document.createElement("div");
+  messageDiv.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} fade-in`;
+  
+  const bubble = document.createElement("div");
+  bubble.className = `max-w-[75%] px-5 py-3 rounded-2xl ${
+    role === 'user' 
+      ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-tr-md' 
+      : 'bg-slate-700/50 text-slate-100 rounded-tl-md border border-slate-600/30'
+  } shadow-lg`;
+  
+  bubble.textContent = text;
+  messageDiv.appendChild(bubble);
+  chat.appendChild(messageDiv);
+  scrollToBottom();
+}
+
+function addTyping() {
+  if (typingNode) return;
+  
+  const messageDiv = document.createElement("div");
+  messageDiv.className = "flex justify-start fade-in";
+  
+  const bubble = document.createElement("div");
+  bubble.className = "px-5 py-4 rounded-2xl rounded-tl-md bg-slate-700/30 border border-slate-600/30";
+  
+  bubble.innerHTML = `
+    <div class="typing-indicator flex gap-1">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  `;
+  
+  messageDiv.appendChild(bubble);
+  typingNode = messageDiv;
+  chat.appendChild(messageDiv);
+  scrollToBottom();
+}
+
+function removeTyping() {
+  if (!typingNode) return;
+  typingNode.remove();
+  typingNode = null;
+}
+
+function clearChat() {
+  chat.innerHTML = "";
+}
+
+// Dr. Aiden 2.0 Speech Engine (Hugging Face Parler-TTS)
+function speak(text) {
+  if (!isVoiceMode) return; 
+  
+  // Stop current speech if any
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
+
+  statusText.textContent = "Dr. Aiden is responding...";
+  
+  const utterance = new SpeechSynthesisUtterance(text);
+  
+  // Try to find a natural English voice
+  const voices = window.speechSynthesis.getVoices();
+  const preferredVoice = voices.find(v => v.lang.includes('en-US') && v.name.includes('Google')) || 
+                         voices.find(v => v.lang.includes('en')) || 
+                         voices[0];
+  
+  if (preferredVoice) utterance.voice = preferredVoice;
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+  
+  utterance.onstart = () => {
+    statusText.textContent = "Dr. Aiden is speaking...";
+  };
+  
+  utterance.onend = () => {
+    statusText.textContent = "Tap the microphone to speak";
+  };
+  
+  utterance.onerror = (e) => {
+    console.error("Browser TTS Error:", e);
+    statusText.textContent = "Tap the microphone to speak";
+  };
+  
+  window.speechSynthesis.speak(utterance);
+}
+
+async function initializeSession() {
+  try {
+    const response = await fetch("/start", { method: "POST" });
+    const data = await response.json();
+    sessionId = data.session_id;
+
+    document.getElementById("loadingDots").style.display = "none";
+    startButton.disabled = false;
+    startButton.textContent = "Start Session";
+    window.initialMessage = data.assistant_message;
+  } catch (error) {
+    console.error("Error initializing session:", error);
+    document.getElementById("loadingDots").style.display = "none";
+    startButton.disabled = false;
+    startButton.textContent = "Error - Retry";
+  }
+}
+
+startButton.onclick = () => {
+  loadingScreen.classList.add("hidden");
+  setTimeout(() => {
+    loadingScreen.style.display = "none";
+    mainApp.style.display = "flex";
+    
+    if (window.initialMessage) {
+      addMessage(window.initialMessage, "assistant");
+      // Give a tiny delay for audio context to be allowed
+      setTimeout(() => speak(window.initialMessage), 500);
+    }
+  }, 500);
+};
+
+window.onload = initializeSession;
+
+// Mode toggle
+voiceModeBtn.onclick = () => {
+  isVoiceMode = true;
+  voiceModeBtn.classList.remove("bg-slate-700/50", "text-slate-400");
+  voiceModeBtn.classList.add("bg-blue-600", "text-white");
+  textModeBtn.classList.remove("bg-blue-600", "text-white");
+  textModeBtn.classList.add("bg-slate-700/50", "text-slate-400");
+  voiceInput.style.display = "flex";
+  textInput.style.display = "none";
+};
+
+textModeBtn.onclick = () => {
+  isVoiceMode = false;
+  textModeBtn.classList.remove("bg-slate-700/50", "text-slate-400");
+  textModeBtn.classList.add("bg-blue-600", "text-white");
+  voiceModeBtn.classList.remove("bg-blue-600", "text-white");
+  voiceModeBtn.classList.add("bg-slate-700/50", "text-slate-400");
+  voiceInput.style.display = "none";
+  textInput.style.display = "block";
+  chatInput.focus();
+};
+
+async function sendTextMessage(message) {
+  addMessage(message, "user");
+  addTyping();
+
+  try {
+    const response = await fetch("/chat_text", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: message,
+        session_id: sessionId
+      })
+    });
+
+    const data = await response.json();
+    removeTyping();
+    addMessage(data.assistant_message, "assistant");
+    speak(data.assistant_message);
+  } catch (err) {
+    removeTyping();
+    addMessage("I apologize, but I'm having trouble connecting right now.", "assistant");
+    console.error("Error:", err);
+  }
+}
+
+sendBtn.onclick = () => {
+  const message = chatInput.value.trim();
+  if (message) {
+    chatInput.value = "";
+    sendTextMessage(message);
+  }
+};
+
+chatInput.onkeypress = (e) => {
+  if (e.key === 'Enter') sendBtn.onclick();
+};
+
+resetBtn.onclick = async () => {
+  if (window.currentAudio) window.currentAudio.pause();
+  clearChat();
+  statusText.textContent = "Starting new session...";
+
+  try {
+    const response = await fetch("/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId })
+    });
+
+    const data = await response.json();
+    sessionId = data.session_id;
+
+    addMessage(data.assistant_message, "assistant");
+    speak(data.assistant_message);
+    statusText.textContent = "Tap the microphone to speak";
+  } catch (error) {
+    console.error("Error resetting session:", error);
+  }
+};
+
+// Dr. Aiden 2.0 Voice Capture (Cross-browser supported)
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = (event) => {
+      audioChunks.push(event.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.webm');
+
+      statusText.textContent = "Transcribing your voice...";
+      addTyping();
+
+      try {
+        const response = await fetch("/transcribe", {
+          method: "POST",
+          body: formData
+        });
+        const data = await response.json();
+        
+        removeTyping();
+        if (data.text && data.text.trim() !== "") {
+          sendTextMessage(data.text);
+        } else {
+          statusText.textContent = "I didn't catch that. Try again?";
+        }
+      } catch (e) {
+        removeTyping();
+        console.error("Transcription failed", e);
+        statusText.textContent = "Tap to try again";
+      }
+    };
+
+    mediaRecorder.start();
+    isListening = true;
+    micBtn.classList.add("recording-pulse", "!from-red-500", "!to-red-600", "!shadow-red-500/50");
+    statusText.textContent = "Listening... (tap again to stop)";
+  } catch (err) {
+    console.error("Microphone access denied", err);
+    statusText.textContent = "Microphone access denied";
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && isListening) {
+    mediaRecorder.stop();
+    isListening = false;
+    micBtn.classList.remove("recording-pulse", "!from-red-500", "!to-red-600", "!shadow-red-500/50");
+    statusText.textContent = "Processing...";
+    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+  }
+}
+
+micBtn.onclick = () => {
+  if (!isListening) {
+    startRecording();
+  } else {
+    stopRecording();
+  }
+};
+
+</script>
+
+</body>
+</html>
