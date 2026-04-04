@@ -11,31 +11,7 @@ An intelligent, **production-ready** psychiatric assessment system powered by La
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Amogh1221/Mental_HealthCare_VoiceAssistant/blob/main/LICENSE)
 
----
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [System Architecture](#system-architecture)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [API Endpoints](#api-endpoints)
-- [Core Components](#core-components)
-- [Deployment Guide](#deployment-guide)
-- [Troubleshooting](#troubleshooting)
-- [Privacy & Ethics](#privacy--ethics)
-- [Limitations](#limitations)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Crisis Resources](#crisis-resources)
-
----
 
 ## Overview
 
@@ -113,11 +89,11 @@ When analysis is triggered, LLM2 identifies patterns across:
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
-│                       Frontend (Browser)                            │
+│                       Frontend (Browser)                           │
 │  - HTML5 Tailwind UI                                               │
 │  - Web Audio API (Microphone)                                      │
 │  - Web Speech API (TTS)                                            │
-└────────────────────┬─────────────────────────────────────────────┘
+└────────────────────┬───────────────────────────────────────────────┘
                      │ HTTP/WebSocket
                      ▼
 ┌────────────────────────────────────────────────────────────────────┐
@@ -131,11 +107,11 @@ When analysis is triggered, LLM2 identifies patterns across:
   │  Whisper    │                                  │  HuggingFace     │
   │   (Local)   │                                  │   Inference API  │
   │   STT       │                                  │                  │
-  │  CPU:int8   │                                  │  • LLM1 (1.5B)  │
-  └─────────────┘                                  │  • LLM2 (7B)     │
+  │  CPU:int8   │                                  │  • LLM1 (7B)     │
+  └─────────────┘                                  │  • LLM2 (70B)    │
                                                    └────────┬─────────┘
                                                             │
-                                                   ┌────────▼──────────┐
+                                                   ┌────────▼───────────┐
                                                    │   Pinecone Cloud   │
                                                    │                    │
                                                    │  Vector DB         │
