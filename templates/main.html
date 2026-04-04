@@ -400,6 +400,11 @@
 
 <script>
 
+// 🚀 CLOUD DEPLOYMENT LINKAGE
+// Local: Leave blank ("") to use your local machine.
+// Production: Paste your Hugging Face Space URL here (e.g. "https://amogh-mhcva.hf.space")
+const BACKEND_URL = ""; 
+
 let sessionId = null;
 let isListening = false;
 let isVoiceMode = true;
@@ -522,7 +527,7 @@ function speak(text) {
 
 async function initializeSession() {
   try {
-    const response = await fetch("/start", { method: "POST" });
+    const response = await fetch(`${BACKEND_URL}/start`, { method: "POST" });
     const data = await response.json();
     sessionId = data.session_id;
 
@@ -581,7 +586,7 @@ async function sendTextMessage(message) {
   addTyping();
 
   try {
-    const response = await fetch("/chat_text", {
+    const response = await fetch(`${BACKEND_URL}/chat_text`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -619,7 +624,7 @@ resetBtn.onclick = async () => {
   statusText.textContent = "Starting new session...";
 
   try {
-    const response = await fetch("/reset", {
+    const response = await fetch(`${BACKEND_URL}/reset`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ session_id: sessionId })
@@ -656,7 +661,7 @@ async function startRecording() {
       addTyping();
 
       try {
-        const response = await fetch("/transcribe", {
+        const response = await fetch(`${BACKEND_URL}/transcribe`, {
           method: "POST",
           body: formData
         });

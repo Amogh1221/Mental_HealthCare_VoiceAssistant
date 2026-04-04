@@ -1,0 +1,25 @@
+# Python debris
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Large models (Whisper will download locally in the container)
+models/
+
+# Database files (Using Pinecone cloud)
+MH_db/
+
+# Secrets (Using HF Secrets)
+.env
+api_keys.json
+
+# Debris
+old/
+test.py
+test_llm.py
+speech_temp.wav
+P_1.ipynb
+.git
+.vscode
+.idea
