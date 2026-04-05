@@ -23,8 +23,14 @@ class RAGEngine:
             embedding=self.embeddings
         )
 
-    def retrieve(self, query: str, k: int = 3):
-        results = self.vectorstore.similarity_search(query, k=k)
+    def retrieve(self, query: str, k: int = 8, fetch_k: int = 30, lambda_mult: float = 0.7):
+        # Using Maximal Marginal Relevance (MMR) for diverse clinical context
+        results = self.vectorstore.max_marginal_relevance_search(
+            query, 
+            k=k, 
+            fetch_k=fetch_k,
+            lambda_mult=lambda_mult # 0.5 to 1.0; higher means more relevance, lower means more diversity
+        )
         return "\n\n".join([doc.page_content for doc in results])
 
 rag_engine = RAGEngine()

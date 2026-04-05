@@ -107,8 +107,8 @@ When analysis is triggered, LLM2 identifies patterns across:
   │  Whisper    │                                  │  HuggingFace     │
   │   (Local)   │                                  │   Inference API  │
   │   STT       │                                  │                  │
-  │  CPU:int8   │                                  │  • LLM1 (7B)     │
-  └─────────────┘                                  │  • LLM2 (70B)    │
+  │  CPU:int8   │                                  │  • LLM1 (7B)    │
+  └─────────────┘                                  │  • LLM2 (70B)   │
                                                    └────────┬─────────┘
                                                             │
                                                    ┌────────▼───────────┐
@@ -155,7 +155,7 @@ When analysis is triggered, LLM2 identifies patterns across:
 |-----------|-----------|---------|
 | **Backend Framework** | FastAPI | RESTful API, async processing |
 | **LLM Inference** | HuggingFace Inference API | Cloud-hosted model serving |
-| **LLM Models** | Qwen 2.5 (1.5B & 7B) | Language understanding & generation |
+| **LLM Models** | Qwen 2.5 (7B) & Llama 3.3 (70B) | Language understanding & generation |
 | **Vector Database** | Pinecone Cloud | Semantic search over clinical knowledge |
 | **Embeddings** | sentence-transformers/all-MiniLM-L6-v2 | Convert text to vectors |
 | **Speech Recognition** | Faster-Whisper (tiny.en) | Real-time audio transcription |
@@ -225,8 +225,8 @@ Create a `.env` file in the project root:
 ```bash
 # HuggingFace Configuration
 HUGGINGFACE_API_TOKEN=hf_your_token_here
-LLM1_MODEL=Qwen/Qwen2.5-1.5B-Instruct
-LLM2_MODEL=Qwen/Qwen2.5-7B-Instruct
+LLM1_MODEL=Qwen/Qwen2.5-7B-Instruct
+LLM2_MODEL=meta-llama/Llama-3.3-70B-Instruct
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 
 # Pinecone Configuration
@@ -290,10 +290,9 @@ EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 Edit `rag_engine.py`:
 
 ```python
-def retrieve(self, query: str, k: int = 3):  # k = number of results
-    # Increase k (e.g., 5) for more context
-    # Decrease k (e.g., 2) for faster retrieval
-    results = self.vectorstore.similarity_search(query, k=k)
+def retrieve(self, query: str, k: int = 8):  # k = number of results
+    # MMR ensures diverse clinical context (avoids redundant symptom info)
+    results = self.vectorstore.max_marginal_relevance_search(query, k=k)
 ```
 
 ### Whisper Audio Settings
@@ -458,16 +457,7 @@ Note: `intent` is either:
 
 ---
 
-### `GET /speech`
-**Convert text to speech**
 
-**Query Parameters:**
-- `text` (string): Text to synthesize
-
-**Response:** 
-- `audio/wav` - Audio file (browser handles playback)
-
----
 
 ## Core Components
 
@@ -482,7 +472,7 @@ Note: `intent` is either:
 - Decide when to trigger analysis
 - Provide psychoeducation
 
-**System Prompt**: 24K tokens of detailed clinical guidelines
+**System Prompt**: Detailed clinical guidelines
 - Conversational tone guidelines
 - CONTINUE vs ANALYZE decision logic
 - Safety protocols for suicidal ideation
@@ -509,7 +499,7 @@ Note: `intent` is either:
 - Suggest areas for exploration
 - Guide treatment planning
 
-**System Prompt**: 37K tokens of clinical analysis framework
+**System Prompt**: Evidence-based clinical analysis framework
 - 6-domain analysis structure
 - Temporal context inclusion
 - Safety concern flagging
@@ -550,9 +540,9 @@ Note: `intent` is either:
 3. **Both separate**: Individual questions and answers (~244k docs)
 
 **Retrieval**:
-- Semantic similarity search
+- Maximal Marginal Relevance (MMR) search
 - Configurable k (number of results)
-- Default k=3 for balance of speed and context
+- Default k=8 to pull a diverse array of clinical insights
 
 ---
 
@@ -648,8 +638,8 @@ git push
 ```bash
 # HuggingFace Configuration
 HUGGINGFACE_API_TOKEN=hf_xxxxxxxxxxx      # Required
-LLM1_MODEL=Qwen/Qwen2.5-1.5B-Instruct     # Optional
-LLM2_MODEL=Qwen/Qwen2.5-7B-Instruct       # Optional
+LLM1_MODEL=Qwen/Qwen2.5-7B-Instruct       # Optional
+LLM2_MODEL=meta-llama/Llama-3.3-70B-Instruct # Optional
 
 # Pinecone Configuration
 PINECONE_API_KEY=xxxxxxxxxxxxxxx          # Required

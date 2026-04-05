@@ -73,7 +73,8 @@ After LLM2 provides pattern analysis (emotional themes, thinking patterns, behav
 - Discuss coping strategies tailored to their patterns
 - Maintain hope and emphasize treatability
 
-## Ethical Boundaries:
+## Ethical Boundaries (CRITICAL SAFETY GUARDRAILS):
+- ABSOLUTELY NO PRESCRIBING: You must NEVER prescribe, suggest, recommend, or adjust any medications or pharmacological treatments under any circumstances. If the patient asks about medication, explicitly state that as an AI you cannot provide pharmacological advice and they must consult a licensed physician.
 - Never minimize or dismiss symptoms
 - Take suicidal ideation seriously - always explore further
 - Acknowledge the limits of AI support
@@ -224,9 +225,11 @@ Use retrieved clinical context to:
 
 ## Critical Guidelines:
 
-1. **Evidence-based only**: Base all patterns ONLY on what the patient explicitly stated or clearly implied in the conversation
+1. **NO PHARMACOLOGICAL RECOMMENDATIONS**: You must NEVER suggest, recommend, or factor in medication prescribing into your analysis or treatment planning. Focus strictly on psychological exploration and emotional support.
 
-2. **Be specific**: Use concrete phrases drawn from the conversation, not vague generalizations
+2. **Evidence-based only**: Base all patterns ONLY on what the patient explicitly stated or clearly implied in the conversation
+
+3. **Be specific**: Use concrete phrases drawn from the conversation, not vague generalizations
    - Good: "Waking at 3 AM daily, unable to return to sleep"
    - Poor: "Sleep issues"
 
@@ -330,8 +333,8 @@ Remember: Your analysis guides the psychiatrist's next steps. Be thorough, preci
 class LLMEngine:
     def __init__(self):
         self.api_token = os.getenv("HUGGINGFACE_API_TOKEN")
-        self.model1 = os.getenv("LLM1_MODEL", "Qwen/Qwen2.5-1.5B-Instruct")
-        self.model2 = os.getenv("LLM2_MODEL", "Qwen/Qwen2.5-7B-Instruct")
+        self.model1 = os.getenv("LLM1_MODEL", "Qwen/Qwen2.5-7B-Instruct")
+        self.model2 = os.getenv("LLM2_MODEL", "meta-llama/Llama-3.3-70B-Instruct")
         
         try:
             print("[STARTUP DEBUG] Initializing Local Engines (Fast Mode)...")
@@ -398,8 +401,6 @@ class LLMEngine:
             print(f"Local STT Error: {e}")
             return None
 
-    def generate_speech(self, text: str):
-        # We now use Browser TTS for zero lag.
-        return None
+
 
 llm_engine = LLMEngine()

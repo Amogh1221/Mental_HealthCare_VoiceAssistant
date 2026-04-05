@@ -198,11 +198,3 @@ async def transcribe(audio: UploadFile = File(...)):
     audio_bytes = await audio.read()
     text = llm_engine.transcribe_audio(audio_bytes)
     return {"text": text if text else ""}
-
-@app.get("/speech")
-async def speech(text: str):
-    """Generate professional speech from text using Parler-TTS."""
-    audio_content = llm_engine.generate_speech(text)
-    if audio_content:
-        return Response(content=audio_content, media_type="audio/wav")
-    return Response(content="Speech generation failed", status_code=500)
