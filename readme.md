@@ -1,3 +1,13 @@
+---
+title: MHCVA Seren AI
+emoji: 🧠
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+short_description: Intelligent Psychiatric Voice Assistant (RAG + Dual LLM)
+---
+
 # SEREN AI - Mental Healthcare Voice Assistant
 
 An intelligent, **production-ready** psychiatric assessment system powered by Large Language Models (LLMs) and Retrieval-Augmented Generation (RAG). Dr. Aiden conducts empathetic clinical interviews, analyzes conversation patterns, and provides evidence-based psychological insights grounded in clinical psychopathology literature.
