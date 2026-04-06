@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PBL Presentation | 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
@@ -67,7 +66,7 @@
     </style>
 </head>
 
-<body onload="startTimer()">
+<body>
 
     <div id="timerContainer"
         class="fixed bottom-10 right-10 px-8 py-4 rounded-3xl flex items-center gap-4 transition-all">
@@ -374,22 +373,39 @@
         let sec = 0;
         let timer = null;
         function startTimer() {
+            if (timer) return; // Prevent multiple instances
             timer = setInterval(() => {
                 sec++;
                 let m = Math.floor(sec / 60);
                 let s = sec % 60;
-                document.getElementById('displayTime').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                const display = document.getElementById('displayTime');
+                if (display) {
+                    display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }
 
                 if (sec >= 480 && sec < 600) { // 8-10 Mins Warning
-                    document.getElementById('timerContainer').classList.add('timer-warning');
-                    document.getElementById('timerIcon').classList.replace('fa-hourglass-start', 'fa-hourglass-half');
+                    const container = document.getElementById('timerContainer');
+                    const icon = document.getElementById('timerIcon');
+                    if (container) container.classList.add('timer-warning');
+                    if (icon) icon.classList.replace('fa-hourglass-start', 'fa-hourglass-half');
                 } else if (sec >= 600) { // 10 Mins Stop
                     clearInterval(timer);
-                    document.getElementById('timerContainer').classList.replace('timer-warning', 'timer-stop');
-                    document.getElementById('displayTime').innerText = "10:00";
-                    document.getElementById('timerIcon').classList.replace('fa-hourglass-half', 'fa-hourglass-end');
+                    const container = document.getElementById('timerContainer');
+                    const icon = document.getElementById('timerIcon');
+                    const display = document.getElementById('displayTime');
+                    if (container) container.classList.replace('timer-warning', 'timer-stop');
+                    if (display) display.innerText = "10:00";
+                    if (icon) icon.classList.replace('fa-hourglass-half', 'fa-hourglass-end');
                 }
             }, 1000);
+        }
+
+        // Start timer immediately when script loads (at bottom of body)
+        // or on DOMContentLoaded if needed. 
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startTimer);
+        } else {
+            startTimer();
         }
     </script>
 </body>
