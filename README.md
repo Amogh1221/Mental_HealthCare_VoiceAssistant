@@ -1,6 +1,5 @@
 ---
 title: MHCVA Seren AI
-emoji: 🧠
 colorFrom: blue
 colorTo: purple
 sdk: docker
