@@ -1,0 +1,2 @@
+# This file tells GitHub Pages not to process the site with Jekyll.
+# This ensures that all files (like LFS images or hidden folders) are served correctly.
