@@ -308,6 +308,9 @@
     <button class="start-button" id="startButton" disabled>
       Initializing...
     </button>
+    <p id="wakeupText" class="text-sm text-slate-400 mt-4 animate-pulse text-center max-w-xs mx-auto">
+      Waking up backend... (this might take up to 50 seconds if the space was asleep)
+    </p>
   </div>
 
   <!-- Main App (Hidden Initially) -->
@@ -541,12 +544,16 @@ async function initializeSession() {
     sessionId = data.session_id;
 
     document.getElementById("loadingDots").style.display = "none";
+    const wakeupText = document.getElementById("wakeupText");
+    if (wakeupText) wakeupText.style.display = "none";
     startButton.disabled = false;
     startButton.textContent = "Start Session";
     window.initialMessage = data.assistant_message;
   } catch (error) {
     console.error("Error initializing session:", error);
     document.getElementById("loadingDots").style.display = "none";
+    const wakeupText = document.getElementById("wakeupText");
+    if (wakeupText) wakeupText.style.display = "none";
     startButton.disabled = false;
     startButton.textContent = "Error - Retry";
   }
