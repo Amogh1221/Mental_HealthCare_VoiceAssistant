@@ -2,7 +2,7 @@ name: Keep Hugging Face Space Alive
 
 on:
   schedule:
-    - cron: '0 */12 * * *' # Every 12 hours
+    - cron: '0 */6 * * *' # Every 6 hours
   workflow_dispatch: # Allows manual trigger
 
 jobs:
@@ -11,4 +11,17 @@ jobs:
     steps:
       - name: Ping Space
         run: |
-          curl -I https://huggingface.co/spaces/Amogh1221/Mental_HealthCare_VoiceAssistant
+          # Retry up to 3 times with 30s delay between attempts
+          for i in 1 2 3; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              --max-time 60 \
+              https://amogh1221-mental-healthcare-voiceassistant.hf.space/health)
+            echo "Attempt $i: HTTP $HTTP_CODE"
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "Space is awake!"
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "Failed to reach Space after 3 attempts"
+          exit 1

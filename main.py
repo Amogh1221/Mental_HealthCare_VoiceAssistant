@@ -72,6 +72,11 @@ def create_new_session():
     return session_id, llm1_response.assistant_message
 
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse(request, "index.html")
